@@ -3,7 +3,7 @@ set output 'benchmark.png'
 
 set title "Benchmark para N procesos" 
 set xlabel "Intentos"
-set ylabel "Tiempo (ms)"
+set ylabel "Tiempo (s)"
 set offset 0.01,2,0.01,0.01
 
 plot "ruby.dat" using 1:2:(sprintf("(%d, %.3f)", $1, $2)) with labels offset char 1,1 notitle,\
