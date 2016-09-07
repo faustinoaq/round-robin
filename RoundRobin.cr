@@ -131,10 +131,11 @@ class RoundRobin
   end
 
   private def siguiente_estado(p)
-    bloqueo = rand(3)
-    if bloqueo == 1
-      p[:estado] = "B"
-    elsif p[:instruc] == 0
+    # bloqueo = rand(3)
+    # if bloqueo == 1
+      # p[:estado] = "B"
+    # elsif p[:instruc] == 0
+    if p[:instruc] == 0
       p[:estado] = "T"
     else
       p[:estado] = "L"

@@ -175,10 +175,11 @@ public class RoundRobin {
     }
 
     void siguienteEstado(Proceso p) {
-        Random bloqueo = new Random();
-        if (bloqueo.nextInt(3) == 1) {
-            p.estado = "B";
-        } else if (p.instruc == 0) {
+        // Random bloqueo = new Random();
+        // if (bloqueo.nextInt(3) == 1) {
+            // p.estado = "B";
+        // } else if (p.instruc == 0) {
+        if (p.instruc == 0) {
             p.estado = "T";
         } else {
             p.estado = "L";
