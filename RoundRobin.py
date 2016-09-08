@@ -90,7 +90,6 @@ class RoundRobin():
         if p["inst"] > self.quantum:
             p["inst"] -= self.quantum
             p["estado"] = "E"
-            self.reposicionar()
             self.almacenar()
             p["estado"] = "L"
         elif p["estado"] != "T":

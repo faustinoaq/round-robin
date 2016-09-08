@@ -10,12 +10,18 @@ import java.util.ArrayList;
 /**
  * Algoritmo de planificación por turnos (Round Robin)
  * @faustinoaq Agosto 7, 2016
+ * N(Nuevo) L(Listo) E(Ejecución) B(Bloqueado) T(Terminado)
  */
 
 public class RoundRobin {
+    // Aleatorios
+    // Random rand = new Random();
+    // int quantum = 1 + rand.nextInt(9);;
+    // int cantidad = 1 + rand.nextInt(4);;
+
+    // Fijos
     int quantum;
     int cantidad;
-    // String archivo = "resultados.txt";
     String archivo = "java.txt";
     ArrayList<String> buffer = new ArrayList<>();
     Proceso[] procesos;
@@ -57,6 +63,9 @@ public class RoundRobin {
             p = new Proceso();
             p.pcb = "PC" + Integer.toString(i+1);
             p.id = "0" + Integer.toString(i+1);
+            // Scanner scan = new Scanner(System.in);
+            // System.out.println("Nombre del archivo: ");
+            // this.instruc = scan.nextInt();
             // p.instruc = 50 + rand.nextInt(50);
             p.instruc = 100;
             p.estado = "N";
@@ -76,6 +85,7 @@ public class RoundRobin {
 
     void titulo() {
         this.buffer.add("Modelo de estados\n");
+        this.buffer.add("N(Nuevo) L(Listo) E(Ejecución) B(Bloqueado) T(Terminado)\n");
         this.buffer.add("Cantidad de procesos:" + this.cantidad + "\n");
         this.buffer.add("Quantum: " + this.quantum + "\n");
         this.buffer.add("Archivo: " + this.archivo + "\n");
@@ -162,7 +172,6 @@ public class RoundRobin {
         }else if (p.instruc > quantum) {
             p.instruc -= quantum;
             p.estado = "E";
-            reposicionar();
             almacenar();
             siguienteEstado(p);
         } else if (!"T".equals(p.estado)) {

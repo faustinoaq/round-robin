@@ -4,3 +4,4 @@ __pycache__
 Java/*.class
 *.txt
 *.dat
+.directory

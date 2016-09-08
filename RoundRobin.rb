@@ -93,7 +93,6 @@ class RoundRobin
     if p[:inst] > @quantum
       p[:inst] -= @quantum
       p[:estado] = "E"
-      reposicionar
       almacenar
       p[:estado] = "L"
     elsif p[:estado] != "T"
