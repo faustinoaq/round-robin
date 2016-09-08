@@ -3,7 +3,7 @@
 benchmark: compile
 	/usr/bin/bash Benchmark/benchmark.sh
 
-compile: java crystal
+compile: java crystal python
 
 ruby:
 	ruby RoundRobin.rb
