@@ -8,10 +8,5 @@ procesos en los siguientes lenguajes:
 * Java
 * Crystal
 
-![time](https://raw.githubusercontent.com/faustinoaq/RoundRobin/master/time.png)
-![cpu](https://raw.githubusercontent.com/faustinoaq/RoundRobin/master/cpu.png)
-![memory](https://raw.githubusercontent.com/faustinoaq/RoundRobin/master/memory.png)
-![time_vs_memory](https://raw.githubusercontent.com/faustinoaq/RoundRobin/master/time_vs_memory.png)
-
 # Autor
-[@faustinoaq](http://github.com/faustinoaq) Agosto 7, 2016
+[@faustinoaq](http://github.com/faustinoaq) Sept, 2016

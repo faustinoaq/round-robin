@@ -1,9 +1,18 @@
 # coding: utf-8
-# Algoritmo de planificación por turnos (Round Robin)
-# @faustinoaq Agosto 7, 2016
+# Algoritmo de planificación por turnos (Round Robin):
+# @faustinoaq Sept, 2016
 
-from random import randint
 from sys import argv
+
+
+class Proceso():
+
+    def __init__(self, pcb, id, instru, estado, posic):
+        self.pcb = pcb
+        self.id = id
+        self.instru = instru
+        self.estado = estado
+        self.posic = posic
 
 
 class RoundRobin():
@@ -13,90 +22,87 @@ class RoundRobin():
         self.quantum = quantum
         self.archivo = archivo
         self.buffer = []
-        self.procesos = []
-        for i in range(1, self.n + 1):
-            self.procesos.append({
-                "pcb": "P{}".format(i),
-                "id": "0{}".format(i),
-                # "inst": randint(50, 100),
-                "inst": 100,
-                "estado": "N",
-                "pos": i
-            })
-        self.titulo()
-        self.listo()
-        self.trabajar()
-        self.guardar()
+        self.procesos = [
+            Proceso("P{}".format(i), "0{}".format(i), 100, "N", i)
+            for i in range(1, self.n + 1)
+        ]
+        self.titulo_buffer()
+        self.cola_listo()
+        self.procesar_cola()
+        self.guardar_archivo()
 
-    def titulo(self):
-        self.buffer.append("Algoritmo de planificación Round Robin\n")
+    def titulo_buffer(self):
+        self.buffer = ["Algoritmo de planificación Round Robin\n"]
+        self.buffer.append("N(Nuevo) L(Listo) E(Ejecución) T(Terminado)\n")
         self.buffer.append("Cantidad de procesos: {}\n".format(self.n))
         self.buffer.append("Quantum: {}\n".format(self.quantum))
-        self.buffer.append("Archivo: {}\n".format(self.archivo))
-        self.almacenar()
+        self.guardar_buffer()
 
-    def almacenar(self):
-        titulo = {
-            "pcb": "Proceso",
-            "id": "ID de proceso",
-            "inst": "Instruciones por ejecucion",
-            "estado": "Estado",
-            "pos": "Posición en cola"
-        }
-        for k in self.procesos[0]:
-            self.buffer.append(titulo[k])
-            for p in self.procesos:
-                self.buffer.append("\t{}".format(p[k]))
-            self.buffer.append("\n")
+    def guardar_buffer(self):
+        self.buffer.append("\nProceso")
+        for p in self.procesos:
+            self.buffer.append("\t{}".format(p.pcb))
+        self.buffer.append("\nID")
+        for p in self.procesos:
+            self.buffer.append("\t{}".format(p.id))
+        self.buffer.append("\nInstruc")
+        for p in self.procesos:
+            self.buffer.append("\t{}".format(p.instru))
+        self.buffer.append("\nEstado")
+        for p in self.procesos:
+            self.buffer.append("\t{}".format(p.estado))
+        self.buffer.append("\nPosic")
+        for p in self.procesos:
+            self.buffer.append("\t{}".format(p.posic))
         self.buffer.append("\n")
 
-    def guardar(self):
-        try:
-            with open(self.archivo, "w") as f:                                                                                                                                         
-                f.write("".join(self.buffer))                                                                                                                                                                     
-                f.close() 
-            print("Se guardó {} correctamente".format(self.archivo))
-        except:
-            raise("Error al guardar {}".format(self.archivo))
-
-    def listo(self):
+    def cola_listo(self):
         for p in self.procesos:
-            p["estado"] = "L"
-        self.almacenar()
+            p.estado = "L"
+        self.guardar_buffer()
 
-    def trabajar(self):
-        while not self.terminado():
+    def procesar_cola(self):
+        while self.procesos_no_terminados():
             for p in self.procesos:
-                self.procesar(p)
-        self.reposicionar()
-        self.almacenar()
+                self.trabajar_proceso(p)
+        self.reposicionar_cola()
+        self.guardar_buffer()
 
-    def reposicionar(self):
+    def reposicionar_cola(self):
         posicion = 0
         for p in self.procesos:
-            if p["estado"] == "T":
-                p["pos"] = 0
+            if p.estado == "T":
+                p.posic = 0
             else:
                 posicion += 1
-                p["pos"] = posicion
+                p.posic = posicion
 
-    def terminado(self):
+    def procesos_no_terminados(self):
         for p in self.procesos:
-            if p["estado"] != "T":
-                return False
-        return True
+            if p.estado != "T":
+                return True
+        return False
 
-    def procesar(self, p):
-        if p["inst"] > self.quantum:
-            p["inst"] -= self.quantum
-            p["estado"] = "E"
-            self.almacenar()
-            p["estado"] = "L"
-        elif p["estado"] != "T":
-            p["inst"] = 0
-            p["estado"] = "E"
-            self.reposicionar()
-            self.almacenar()
-            p["estado"] = "T"
+    def trabajar_proceso(self, p):
+        if p.instru > self.quantum:
+            p.instru -= self.quantum
+            p.estado = "E"
+            self.guardar_buffer()
+            p.estado = "T" if p.instru == 0 else "L"
+        elif p.estado != "T":
+            p.instru = 0
+            p.estado = "E"
+            self.reposicionar_cola()
+            self.guardar_buffer()
+            p.estado = "T"
 
-RoundRobin(int(argv[1]), int(argv[2]), "python.txt")
+    def guardar_archivo(self):
+        try:
+            with open(self.archivo, "w") as f:
+                f.write("".join(self.buffer))
+                f.close()
+            print("{} guardado correctamente".format(self.archivo))
+        except IOError:
+            raise("Error al guardar {}".format(self.archivo))
+
+RoundRobin(int(argv[1]), int(argv[2]), "pytest.txt")

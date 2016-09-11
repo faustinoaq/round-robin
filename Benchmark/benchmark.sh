@@ -17,10 +17,6 @@ do
 done
 
 gnuplot -c Benchmark/time.plt
-display time.png
 gnuplot -c Benchmark/memory.plt
-display memory.png
 gnuplot -c Benchmark/cpu.plt
-display cpu.png
 gnuplot -c Benchmark/time_vs_memory.plt
-display time_vs_memory.png

@@ -1,112 +1,98 @@
-package Java;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.BufferedWriter;
-import java.util.Random;
-import java.util.Scanner; 
 import java.util.ArrayList;
 
 /**
  * Algoritmo de planificación por turnos (Round Robin)
- * @faustinoaq Agosto 7, 2016
- * N(Nuevo) L(Listo) E(Ejecución) B(Bloqueado) T(Terminado)
+ * @faustinoaq Sept, 2016
  */
 
-public class RoundRobin {
-    // Aleatorios
-    // Random rand = new Random();
-    // int quantum = 1 + rand.nextInt(9);;
-    // int cantidad = 1 + rand.nextInt(4);;
-
-    // Fijos
+class RoundRobin {
+    int n;
     int quantum;
-    int cantidad;
-    String archivo = "java.txt";
-    ArrayList<String> buffer = new ArrayList<>();
+    String archivo;
     Proceso[] procesos;
+    ArrayList<String> buffer;
 
-    RoundRobin (int cantidad, int quantum) {
-        // fijarDatos();
+    RoundRobin (int n, int quantum, String archivo) {
+        this.n = n;
         this.quantum = quantum;
-        this.cantidad = cantidad;
-        this.procesos = new Proceso[cantidad];
-    }
-
-    public static void main(String[] args) {
-        RoundRobin bloque = new RoundRobin(Integer.parseInt(args[0]), Integer.parseInt(args[1]));
-        try {
-            bloque.iniciar();
-            System.out.println("Se guardó " + bloque.archivo + " correctamente");
-        } catch (Exception e){
-            System.out.println("Ha ocurrido un error al ejecutar el programa");
-        }
-    }
-
-    void fijarDatos() {
-        Scanner scan = new Scanner(System.in);
-        System.out.println("Modelo de Estados\n");
-        System.out.println("Valor del quantum: ");
-        this.quantum = scan.nextInt();
-        System.out.println("Cantida de procesos: ");
-        this.cantidad = scan.nextInt();
-        System.out.println("Nombre del archivo: ");
-        this.archivo = scan.next();
-        this.procesos = new Proceso[cantidad];
-    }
-
-    void iniciar() {
-        Random rand = new Random();
+        this.archivo = archivo;
+        this.procesos = new Proceso[n];
+        this.buffer = new ArrayList<>();
         Proceso p;
-        int i;
-        for (i = 0; i < this.cantidad; i++) {
+        for (int i = 0; i < this.n; i++) {
             p = new Proceso();
-            p.pcb = "PC" + Integer.toString(i+1);
+            p.pcb = "P" + Integer.toString(i+1);
             p.id = "0" + Integer.toString(i+1);
-            // Scanner scan = new Scanner(System.in);
-            // System.out.println("Nombre del archivo: ");
-            // this.instruc = scan.nextInt();
-            // p.instruc = 50 + rand.nextInt(50);
-            p.instruc = 100;
+            p.instru = 100;
             p.estado = "N";
             p.posic = i + 1;
             procesos[i] = p;
         }
-        titulo();
-        almacenar();
-        for (i = 0; i < this.cantidad; i++) {
-            procesos[i].estado = "L";
-        }
-        almacenar();
-        trabajar();
-        guardar();
+        tituloBuffer();
+        colaListo();
+        procesarCola();
+        guardarArchivo();
     }
 
+    public static void main(String[] args) {
+        new RoundRobin(Integer.parseInt(args[0]),
+                       Integer.parseInt(args[1]),
+                       "jatest.txt");
+    }
 
-    void titulo() {
-        this.buffer.add("Modelo de estados\n");
-        this.buffer.add("N(Nuevo) L(Listo) E(Ejecución) B(Bloqueado) T(Terminado)\n");
-        this.buffer.add("Cantidad de procesos:" + this.cantidad + "\n");
+    private void tituloBuffer() {
+        this.buffer.add("Algoritmo de planificación Round Robin\n");
+        this.buffer.add("N(Nuevo) L(Listo) E(Ejecución) T(Terminado)\n");
+        this.buffer.add("Cantidad de procesos: " + this.n + "\n");
         this.buffer.add("Quantum: " + this.quantum + "\n");
-        this.buffer.add("Archivo: " + this.archivo + "\n");
+        guardarBuffer();
     }
 
-    void guardar() {
-        try {
-            File a;
-            a = new File(this.archivo);
-            try (BufferedWriter b = new BufferedWriter(new FileWriter(a))) {
-                String buf = String.join("", this.buffer);
-                b.write(buf);
-            } catch (Exception e) {
-                System.out.println("Error al escribir el archivo " + this.archivo);
-            }
-        } catch (Exception e) {
-            System.out.println("Error al abrir el archivo " + this.archivo);
+    private void guardarBuffer() {
+        this.buffer.add("\nProceso");
+        for(Proceso p : procesos) {
+            this.buffer.add("\t" + p.pcb);
         }
+        this.buffer.add("\nID");
+        for(Proceso p : procesos) {
+            this.buffer.add("\t" + p.id);
+        }
+        this.buffer.add("\nInstruc");
+        for(Proceso p : procesos) {
+            this.buffer.add("\t" + Integer.toString(p.instru));
+        }
+        this.buffer.add("\nEstado");
+        for(Proceso p : procesos) {
+            this.buffer.add("\t" + p.estado);
+        }
+        this.buffer.add("\nPosic");
+        for(Proceso p : procesos) {
+            this.buffer.add("\t" + Integer.toString(p.posic));
+        }
+        this.buffer.add("\n");
     }
 
-    void reposicionar() {
+    private void colaListo() {
+        for (int i = 0; i < this.n; i++) {
+            this.procesos[i].estado = "L";
+        }
+        guardarBuffer();
+    }
+
+    private void procesarCola() {
+        while (procesosNoTerminados()) {
+            for (Proceso p : procesos) {
+                trabajarProceso(p);
+            } 
+        }
+        reposicionarCola();
+        guardarBuffer();
+    }
+
+    private void reposicionarCola() {
         int posicion = 0;
         for (Proceso p : procesos) {
             if (p.estado.equals("T")) {
@@ -118,46 +104,7 @@ public class RoundRobin {
         }
     }
 
-    void almacenar() {
-        this.buffer.add("PCB");
-        for(Proceso p : procesos) {
-            this.buffer.add("\t");
-            this.buffer.add(p.pcb);
-        }
-        this.buffer.add("\nID Proc");
-        for(Proceso p : procesos) {
-            this.buffer.add("\t");
-            this.buffer.add(p.id);
-        }
-        this.buffer.add("\nInsxEje");
-        for(Proceso p : procesos) {
-            this.buffer.add("\t");
-            this.buffer.add(Integer.toString(p.instruc));
-        }
-        this.buffer.add("\nEstado");
-        for(Proceso p : procesos) {
-            this.buffer.add("\t");
-            this.buffer.add(p.estado);
-        }
-        this.buffer.add("\nPosicn");
-        for(Proceso p : procesos) {
-            this.buffer.add("\t");
-            this.buffer.add(Integer.toString(p.posic));
-        }
-        this.buffer.add("\n\n");
-    }
-
-    void trabajar() {
-        while (ejecutar()) {
-            for (Proceso p : procesos) {
-                modificar(p);
-            } 
-        }
-        reposicionar();
-        almacenar();
-    }
-
-    boolean ejecutar() {
+    private boolean procesosNoTerminados() {
         for (Proceso p : procesos) {
             if (!"T".equals(p.estado)) {
                 return true;
@@ -166,32 +113,31 @@ public class RoundRobin {
         return false;
     }
 
-    void modificar(Proceso p) {
-        if (p.estado.equals("B")) {
-            siguienteEstado(p);
-        }else if (p.instruc > quantum) {
-            p.instruc -= quantum;
+    private void trabajarProceso(Proceso p) {
+        if (p.instru > quantum) {
+            p.instru -= quantum;
             p.estado = "E";
-            almacenar();
-            siguienteEstado(p);
+            guardarBuffer();
+            p.estado = (p.instru == 0) ? "T" : "L";
         } else if (!"T".equals(p.estado)) {
-            p.instruc = 0;
+            p.instru = 0;
             p.estado = "E";
-            reposicionar();
-            almacenar();
-            siguienteEstado(p);
+            reposicionarCola();
+            guardarBuffer();
+            p.estado = "T";
         }
     }
 
-    void siguienteEstado(Proceso p) {
-        // Random bloqueo = new Random();
-        // if (bloqueo.nextInt(3) == 1) {
-            // p.estado = "B";
-        // } else if (p.instruc == 0) {
-        if (p.instruc == 0) {
-            p.estado = "T";
-        } else {
-            p.estado = "L";
+    private void guardarArchivo() {
+        try {
+            File f = new File(this.archivo);
+            FileWriter fw = new FileWriter(f);
+            BufferedWriter bw = new BufferedWriter(fw);
+            bw.write(String.join("", this.buffer));
+            bw.close();
+            System.out.println(this.archivo + " guardado correctamente");
+        } catch (Exception e) {
+            System.out.println("Error al guardar " + this.archivo);
         }
     }
 }

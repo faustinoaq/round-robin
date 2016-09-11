@@ -1,5 +1,16 @@
 # Algoritmo de planificación por turnos (Round Robin)
-# @faustinoaq Agosto 7, 2016
+# @faustinoaq Sept, 2016
+
+class Proceso
+  attr_accessor :pcb, :id, :instru, :estado, :posic
+  def initialize(pcb, id, instru, estado, posic)
+    @pcb = pcb
+    @id = id
+    @instru = instru
+    @estado = estado
+    @posic = posic
+  end
+end
 
 class RoundRobin
   def initialize(n, quantum, archivo)
@@ -7,102 +18,105 @@ class RoundRobin
     @quantum = quantum
     @archivo = archivo
     @procesos = (1..@n).map do |i|
-      {
-        :pcb    => "P#{i}",
-        :id     => "0#{i}",
-        # :inst   => rand(50, 100),
-        :inst   => 100,
-        :estado => "N",
-        :pos    => i,
-      }
+      Proceso.new("P#{i}", "0#{i}", 100, "N", i)
     end
-    titulo
-    listo
-    trabajar
-    guardar
+    titulo_buffer
+    cola_listo
+    procesar_cola
+    guardar_archivo
   end
 
-  def titulo
-    @buffer = ["Modelo de 4 estados\n"]
+  private def titulo_buffer
+    @buffer = ["Algoritmo de planificación Round Robin\n"]
+    @buffer << "N(Nuevo) L(Listo) E(Ejecución) T(Terminado)\n"
     @buffer << "Cantidad de procesos: #{@n}\n"
     @buffer << "Quantum: #{@quantum}\n"
-    @buffer << "Archivo: #{@archivo}\n"
-    almacenar
+    guardar_buffer
   end
 
-  def almacenar
-    titulo = {
-      :pcb    => "Proceso",
-      :id     => "ID de proceso",
-      :inst   => "Instruciones por ejecucion",
-      :estado => "Estado",
-      :pos    => "Posición en cola",
-    }
-    @procesos[0].keys.each { |k|
-      @buffer << "#{titulo[k]}".rjust(30)
-      @procesos.each { |p|
-        @buffer << "\t#{p[k]}"
-      }
-      @buffer << "\n"
-    }
+  private def guardar_buffer
+    @buffer << "\nProceso"
+    @procesos.each do |p|
+      @buffer << "\t#{p.pcb}"
+    end
+    @buffer << "\nID"
+    @procesos.each do |p|
+      @buffer << "\t#{p.id}"
+    end
+    @buffer << "\nInstruc"
+    @procesos.each do |p|
+      @buffer << "\t#{p.instru}"
+    end
+    @buffer << "\nEstado"
+    @procesos.each do |p|
+      @buffer << "\t#{p.estado}"
+    end
+    @buffer << "\nPosic"
+    @procesos.each do |p|
+      @buffer << "\t#{p.posic}"
+    end
     @buffer << "\n"
   end
 
-  def guardar
-    File.write(@archivo, @buffer.join)
-    puts "Se guardó #{@archivo} correctamente"
-  rescue Exception => e
-    abort "Error al guardar #{@archivo} #{e}"
-  end
-
-  def listo
-    @procesos.each { |p| p[:estado] = "L" }
-    almacenar
-  end
-
-  def trabajar
-    until terminado
-      @procesos.each { |p| procesar(p) }
+  private def cola_listo
+    @procesos.each do |p|
+      p.estado = "L"
     end
-    reposicionar
-    almacenar
+    guardar_buffer
   end
 
-  def reposicionar
+  private def procesar_cola
+    until procesos_terminados
+      @procesos.each do |p|
+        trabajar_proceso(p)
+      end
+    end
+    reposicionar_cola
+    guardar_buffer
+  end
+
+  private def reposicionar_cola
     posicion = 0
     @procesos.each do |p|
-      if p[:estado] == "T"
-        p[:pos] = 0
+      if p.estado == "T"
+        p.posic = 0
       else
         posicion += 1
-        p[:pos] = posicion
+        p.posic = posicion
       end
     end
   end
 
-  def terminado
+  private def procesos_terminados
     @procesos.each do |p|
-      if p[:estado] != "T"
+      if p.estado != "T"
         return false
       end
     end
     return true
   end
 
-  def procesar(p)
-    if p[:inst] > @quantum
-      p[:inst] -= @quantum
-      p[:estado] = "E"
-      almacenar
-      p[:estado] = "L"
-    elsif p[:estado] != "T"
-      p[:inst] = 0
-      p[:estado] = "E"
-      reposicionar
-      almacenar
-      p[:estado] = "T"
+  private def trabajar_proceso(p)
+    if p.instru > @quantum
+      p.instru -= @quantum
+      p.estado = "E"
+      guardar_buffer
+      p.estado = p.instru == 0 ? "T" : "L"
+    elsif p.estado != "T"
+      p.instru = 0
+      p.estado = "E"
+      reposicionar_cola
+      guardar_buffer
+      p.estado = "T"
     end
+  end
+
+  private def guardar_archivo
+    File.write(@archivo, @buffer.join)
+    puts "#{@archivo} guardado correctamente"
+  rescue
+    abort "Error al guardar #{@archivo}"
   end
 end
 
-RoundRobin.new(ARGV[0].to_i, ARGV[1].to_i, "ruby.txt")
+RoundRobin.new(ARGV[0].to_i, ARGV[1].to_i, "rbtest.txt")

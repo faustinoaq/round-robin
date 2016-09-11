@@ -1,9 +1,7 @@
-package Java;
-
-public class Proceso {
+class Proceso {
     String pcb;
     String id;
-    int instruc;
+    int instru;
     String estado;
     int posic;
 }
