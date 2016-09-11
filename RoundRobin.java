@@ -1,6 +1,6 @@
-import java.io.File;
 import java.io.FileWriter;
 import java.io.BufferedWriter;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 
 /**
@@ -43,6 +43,7 @@ class RoundRobin {
         colaListo();
         procesarCola();
         guardarArchivo();
+        System.out.println(this.archivo + " guardado correctamente");
     }
 
     public static void main(String[] args) {
@@ -81,6 +82,7 @@ class RoundRobin {
             this.buffer.add("\t" + Integer.toString(p.posic));
         }
         this.buffer.add("\n");
+        guardarArchivo();
     }
 
     private void colaListo() {
@@ -138,12 +140,13 @@ class RoundRobin {
 
     private void guardarArchivo() {
         try {
-            File f = new File(this.archivo);
-            FileWriter fw = new FileWriter(f);
+            String buf = String.join("", this.buffer);
+            FileWriter fw = new FileWriter(this.archivo, true);
             BufferedWriter bw = new BufferedWriter(fw);
-            bw.write(String.join("", this.buffer));
-            bw.close();
-            System.out.println(this.archivo + " guardado correctamente");
+            PrintWriter pw = new PrintWriter(bw);
+            pw.println(buf);
+            pw.close();
+            this.buffer.clear();
         } catch (Exception e) {
             System.out.println("Error al guardar " + this.archivo);
         }

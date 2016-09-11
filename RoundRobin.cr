@@ -23,6 +23,7 @@ struct RoundRobin
     cola_listo
     procesar_cola
     guardar_archivo
+    puts "#{@archivo} guardado correctamente"
   end
 
   private def titulo_buffer
@@ -55,6 +56,7 @@ struct RoundRobin
       @buffer << "\t#{p.posic}"
     end
     @buffer << "\n"
+    guardar_archivo
   end
 
   private def cola_listo
@@ -111,8 +113,10 @@ struct RoundRobin
   end
 
   private def guardar_archivo
-    File.write(@archivo, @buffer.join)
-    puts "#{@archivo} guardado correctamente"
+    File.open(@archivo, "a") do |f|
+      f << @buffer.join
+    end
+    @buffer.clear
   rescue
     abort "Error al guardar #{@archivo}"
   end

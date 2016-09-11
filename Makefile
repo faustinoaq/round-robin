@@ -15,4 +15,4 @@ crystal:
 	crystal build RoundRobin.cr --release
 
 clean:
-	rm -rf RoundRobin __pycache__ *.class *.plt RR-* 
+	rm -rf RoundRobin __pycache__ *.class *.dat *.txt *.plt *.png RR-* 

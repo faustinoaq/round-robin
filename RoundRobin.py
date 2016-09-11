@@ -30,6 +30,7 @@ class RoundRobin():
         self.cola_listo()
         self.procesar_cola()
         self.guardar_archivo()
+        print("{} guardado correctamente".format(self.archivo))
 
     def titulo_buffer(self):
         self.buffer = ["Algoritmo de planificación Round Robin\n"]
@@ -55,6 +56,7 @@ class RoundRobin():
         for p in self.procesos:
             self.buffer.append("\t{}".format(p.posic))
         self.buffer.append("\n")
+        self.guardar_archivo()
 
     def cola_listo(self):
         for p in self.procesos:
@@ -98,10 +100,10 @@ class RoundRobin():
 
     def guardar_archivo(self):
         try:
-            with open(self.archivo, "w") as f:
+            with open(self.archivo, "a") as f:
                 f.write("".join(self.buffer))
                 f.close()
-            print("{} guardado correctamente".format(self.archivo))
+                self.buffer[:] = []
         except IOError:
             raise("Error al guardar {}".format(self.archivo))
 
