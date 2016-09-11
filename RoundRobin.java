@@ -8,6 +8,14 @@ import java.util.ArrayList;
  * @faustinoaq Sept, 2016
  */
 
+class Proceso {
+    String pcb;
+    String id;
+    int instru;
+    String estado;
+    int posic;
+}
+
 class RoundRobin {
     int n;
     int quantum;

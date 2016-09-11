@@ -1,7 +1,8 @@
 .vscode
+.directory
 RoundRobin
 __pycache__
-Java/*.class
-*.txt
+*.class
 *.dat
-.directory
+*.plt
+RR-*
