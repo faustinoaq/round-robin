@@ -43,14 +43,14 @@ move_data() {
   mv *.dat *.png *.txt "RR-P$N-Q$Q"
 }
 
-for h in 1000 2000 3000 # Procesos
+for h in 1000 # Procesos
 do
   N=$h
   for i in 30 # Quantum
   do
     Q=$i
     echo "Procesos=$N Quantum=$Q ..."
-    for j in 1 2 3 # Intentos
+    for j in $(seq 1 5) # Intentos
     do
       benchmark
     done

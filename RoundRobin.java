@@ -42,7 +42,6 @@ class RoundRobin {
         tituloBuffer();
         colaListo();
         procesarCola();
-        guardarArchivo();
         System.out.println(this.archivo + " guardado correctamente");
     }
 

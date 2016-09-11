@@ -29,7 +29,6 @@ class RoundRobin():
         self.titulo_buffer()
         self.cola_listo()
         self.procesar_cola()
-        self.guardar_archivo()
         print("{} guardado correctamente".format(self.archivo))
 
     def titulo_buffer(self):

@@ -1,8 +1,8 @@
 .vscode
 .directory
+RR*/.directory
 RoundRobin
 __pycache__
 *.class
-*.dat
 *.plt
 RR-*/*.txt

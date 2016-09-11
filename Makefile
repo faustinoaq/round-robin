@@ -1,4 +1,4 @@
-.PHONY: compile benchmark ruby python java crystal clean
+.PHONY: compile benchmark python java crystal clean
 
 benchmark: compile
 	/bin/bash benchmark.sh
@@ -15,4 +15,4 @@ crystal:
 	crystal build RoundRobin.cr --release
 
 clean:
-	rm -rf RoundRobin __pycache__ *.class *.dat *.txt *.plt *.png RR-* 
+	rm -rf RoundRobin __pycache__ *.class *.dat *.txt *.plt *.png

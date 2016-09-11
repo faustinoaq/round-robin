@@ -23,7 +23,6 @@ class RoundRobin
     titulo_buffer
     cola_listo
     procesar_cola
-    guardar_archivo
     puts "#{@archivo} guardado correctamente"
   end
 
