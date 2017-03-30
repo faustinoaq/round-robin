@@ -9,7 +9,7 @@ benchmark() {
   rm -f *.txt
   sleep 1
   /bin/time -a -o "_rb.dat" -f "$j,%e,%M,%P" ruby RoundRobin.rb $N $Q
-  /bin/time -a -o "_py.dat" -f "$j,%e,%M,%P" python __pycache__/RoundRobin.cpython-35.pyc $N $Q
+  /bin/time -a -o "_py.dat" -f "$j,%e,%M,%P" python RoundRobin.py $N $Q
   /bin/time -a -o "_ja.dat" -f "$j,%e,%M,%P" java RoundRobin $N $Q
   /bin/time -a -o "_cr.dat" -f "$j,%e,%M,%P" ./RoundRobin $N $Q  
   sleep 1
@@ -43,10 +43,10 @@ move_data() {
   mv *.dat *.png *.txt "RR-P$N-Q$Q"
 }
 
-for h in 1000 # Procesos
+for h in 100, 1000 # Procesos
 do
   N=$h
-  for i in 30 # Quantum
+  for i in 30, 100 # Quantum
   do
     Q=$i
     echo "Procesos=$N Quantum=$Q ..."
